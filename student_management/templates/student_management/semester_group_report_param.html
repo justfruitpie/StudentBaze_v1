@@ -1,0 +1,84 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Семестровая ведомость</title>{% endblock %}
+
+{% block navitems %} {% load crispy_forms_tags %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %} {% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <a href="{% url 'groups' %}"><i class="fas fa-users icon"></i>Академические группы</a>
+        <a href="{% url 'students' %}"><i class="fas fa-user-graduate icon"></i>Студенты</a>
+        <a href="{% url 'academic-performance' %}"><i class="fas fa-check-circle icon"></i>Успеваемость студентов</a>
+        <a class="active" href="{% url 'semester-group-report' %}"><i class="fas fa-calendar-check icon"></i>Семестровая ведомость</a>
+      </div>
+    </div>
+    <div class="col-md-9 content">
+      <h4>Семестровая ведомость</h4>
+
+
+      <hr style="margin: 10px 0px 20px;">
+      <h6>Задание необходимых параметров:</h6>
+        <div class="row">
+          <div class="col-md-8">
+            <form method="post" id="groupSemesterForm" data-semesters-url="{% url 'ajax-load-semesters-for-semester-report' %}">
+              {% csrf_token %} {{ form|crispy }}
+          </div>
+          <div class="col-md-3">
+            <div class="form-group regbutton">
+              <button class="btn btn-primary" type="submit" name="button" style="margin-top: 36px;">Сформировать ведомость</button>
+            </div>
+          </div>
+          </form>
+        </div>
+
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  $(document).ready(function() {
+      $('#id_group').select2({
+  placeholder: '',
+  allowClear: true,
+});
+  });
+
+
+  $("#id_group").change(function () {
+
+      var url = $("#groupSemesterForm").attr("data-semesters-url");
+      var group_id = $(this).val();
+
+      $.ajax({
+        url: url,
+        data: {
+          'group_id': group_id
+        },
+        success: function (data) {
+          //document.getElementById("changable").innerHTML = data;
+          $("#id_semester").html(data);
+        }
+      });
+
+    });
+</script>
+{% endblock script %}

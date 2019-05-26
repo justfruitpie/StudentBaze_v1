@@ -1,0 +1,159 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Выставление оценок</title>{% endblock %}
+
+{% block navitems %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %} {% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <div class="marks_side_bar">
+          <hr class="hr_marks_side_bar">
+          <p class="extra_marks_text"><strong>Семестровый контроль</strong></p>
+          <div class="upper">
+            <a class="active" href="{% url 'set-marks-to-group-select' %}"><i class="fas fa-star-half-alt icon"></i>Выставить оценки</a>
+            <a href="{% url 'general-marks' %}"><i class="fas fa-tasks icon"></i>Список всех оценок</a>
+            <a href="{% url 'ects-marks' %}"><i class="fas fa-font icon"></i>Оценки ECTS</a>
+            <a href="{% url 'national-marks' %}"><i class="fas fa-home icon"></i>Национальные оценки</a>
+            <a href="{% url 'educational-years' %}"><i class="far fa-calendar-alt icon"></i>Учебные года</a>
+          </div>
+          <hr class="hr_marks_side_bar">
+          <p class="extra_marks_text"><strong>Доп. баллы</strong></p>
+          <div class="upper">
+            <a href="{% url 'extra-marks-choose-student' %}"><i class="fas fa-plus-circle icon"></i>Присвоить доп. баллы</a>
+            <a href="{% url 'extra-marks-activities' %}"><i class="fas fa-trophy icon"></i>Деятельности и достижения</a>
+            <a href="{% url 'extra-marks-activity-categories' %}"><i class="fas fa-th-large icon"></i>Категории деятел. и достиж.</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9 content" id="setExtraMarksForm" data-eduyears-url="{% url 'load-edu-years-ajax' %}">
+      <div class="row">
+        <div class="col-md-9">
+          <h4>Выставление оценок студентам группы {{ group.name }}</h4>
+        </div>
+        <div class="col-md-3">
+          <a href="/marks_system/set_marks_to_group/" class="buttonBackEdit"><i class="fas fa-arrow-left"></i> Назад</a>
+        </div>
+      </div>
+
+
+      <hr style="margin: 10px 0px 20px;">
+      <h6>Задание необходимых параметров:</h6>
+      <div class="col-md-9" id="forSemesterAjax" data-semesters-url="{% url 'load-group-semesters-ajax' %}">
+        <form method="post" id="select_prog_form" data-programs-url="/marks_system/set_marks_to_group/ajax/load-programs/">
+          <div class="form-group">
+            {% csrf_token %} {{ form|crispy }}
+          </div>
+
+      </div>
+      <div class="col-md-9 col-lg-9 col-xs-12">
+        <div class="row justify-content-end">
+          <div class="butH" style = "margin-right: 1.5%; margin-top: 5px;">
+            <button class="btn btn-primary" type="submit" name="button" style="margin-top: 0px; margin-left: 10px">Подтвердить выбор</button>
+            <!--<button class="btn btn-primary" type="submit" name="button" style="margin-top: 36px;">Сохранить изменения</button>-->
+          </div>
+        </div>
+      </div>
+</form>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  $(document).ready(function() {
+      $('#id_syllabus_program').select2({
+  placeholder: '',
+  allowClear: true,
+});
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+
+    var url = $("#forSemesterAjax").attr("data-semesters-url");
+    var group_id = {{ group.id }}
+
+
+    $.ajax({
+      url: url,
+      data: {
+        'group_id': group_id,
+      },
+      success: function (data) {
+        //document.getElementById("changable").innerHTML = data;
+        $("#id_semester").html(data);
+      }
+    });
+
+  });
+</script>
+
+
+<script>
+  $("#id_semester").change(function () {
+
+      var url = $("#select_prog_form").attr("data-programs-url");
+      var semester = $(this).val();
+      var syllabus_id = {{ group.syllabus_id }}
+
+
+      $.ajax({
+        url: url,
+        data: {
+          'semester': semester,
+          'syllabus_id' : syllabus_id
+        },
+        success: function (data) {
+          //document.getElementById("changable").innerHTML = data;
+          $("#id_syllabus_program").html(data);
+        }
+      });
+
+    });
+</script>
+
+
+
+<script>
+  $("#id_semester").change(function () {
+
+      var url = $("#setExtraMarksForm").attr("data-eduyears-url");
+      var semester = $(this).val();
+      var group_id = {{ group.id }}
+
+      $.ajax({
+        url: url,
+        data: {
+          'semester': semester,
+          'group_id': group_id
+        },
+        success: function (data) {
+          //document.getElementById("changable").innerHTML = data;
+          $("#id_educational_year").html(data);
+        }
+      });
+
+    });
+</script>
+
+{% endblock script %}

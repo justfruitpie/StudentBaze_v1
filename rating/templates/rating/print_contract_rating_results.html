@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="shortcut icon" href="{%  static 'home/favicon_print.png' %}">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{% static 'home/main.css' %}">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
+  <title>Рейтинговый список студентов контрактников</title>
+
+</head>
+
+<body>
+  <div class="container toDown2">
+    <div class="row">
+      <div class="col-md-12">
+        <h4 style="text-align: center;">Рейтинговый список студентов контактников ({{ course }})</h4>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12">
+        <p><strong>Учебный год:</strong> {{ edu_year.educational_year }}</p>
+        <p><strong>Факультет: </strong> {{ faculty }}</p>
+        <p><strong>Специальность: </strong> {{ sepecialty }}</p>
+        <p><strong>Группы: </strong>{{ groupsString }}</p>
+        <p><strong>Семестр: </strong> {{ semester }}</p>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-12">
+        <table id="marks_table" class="table table-sm table-bordered">
+          <thead class="mythead">
+            <tr>
+              <th width="8%" class="text-center" scope="col">#</th>
+              <th class="text-center" scope="col">Фамилия</th>
+              <th class="text-center" scope="col">Имя</th>
+              <th class="text-center" scope="col">Отчество</th>
+              <th class="text-center" scope="col">Акад. балл</th>
+              <th class="text-center" scope="col">Рейт. балл</th>
+              <th class="text-center" scope="col">Группа</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in rating_data_list%}
+            <tr>
+              <td align="center">{{ forloop.counter }}</td>
+              <td>{{ item.student.last_name }}</td>
+              <td>{{ item.student.first_name }}</td>
+              <td>{{ item.student.middle_name }}</td>
+              <td align="center">{{ item.academic_mark }}</td>
+              <td align="center">{{ item.rating_mark }}</td>
+              <td align="center">{{ item.student.group.name }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <br>
+    <br>
+    <hr>
+    <br>
+    <div class="row justify-content-end">
+      <div class="col-md-3">
+        <h6>{{ current_time | date:"d/m/Y"}}</h6>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
+  {% block script %}{% endblock %}
+</body>
+
+</html>

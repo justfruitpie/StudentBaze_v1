@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for department in departments %}
+<option value="{{ department.id }}">{{ department.cypher }} - {{ department.name }}</option>
+{% endfor %}

@@ -1,0 +1,146 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Национальные оценки</title>{% endblock %}
+
+{% block navitems %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %}
+
+{% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <div class="marks_side_bar">
+          <hr class="hr_marks_side_bar">
+          <p class="extra_marks_text"><strong>Семестровый контроль</strong></p>
+          <div class="upper">
+            <a href="{% url 'set-marks-to-group-select' %}"><i class="fas fa-star-half-alt icon"></i>Выставить оценки</a>
+            <a href="{% url 'general-marks' %}"><i class="fas fa-tasks icon"></i>Список всех оценок</a>
+            <a href="{% url 'ects-marks' %}"><i class="fas fa-font icon"></i>Оценки ECTS</a>
+            <a class="active" href="{% url 'national-marks' %}"><i class="fas fa-home icon"></i>Национальные оценки</a>
+            <a href="{% url 'educational-years' %}"><i class="far fa-calendar-alt icon"></i>Учебные года</a>
+          </div>
+          <hr class="hr_marks_side_bar">
+          <p class="extra_marks_text"><strong>Доп. баллы</strong></p>
+          <div class="upper">
+            <a href="{% url 'extra-marks-choose-student' %}"><i class="fas fa-plus-circle icon"></i>Присвоить доп. баллы</a>
+            <a href="{% url 'extra-marks-activities' %}"><i class="fas fa-trophy icon"></i>Деятельности и достижения</a>
+            <a href="{% url 'extra-marks-activity-categories' %}"><i class="fas fa-th-large icon"></i>Категории деятел. и достиж.</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9 content">
+      <div class="row">
+        <div class="col-md-9">
+          <h4>Национальные оценки</h4>
+        </div>
+        <div class="col-md-3">
+          <button id="hideFormButton" type="button" class="btn btn-light btn-sm hideButton">Только список</button>
+        </div>
+      </div>
+
+
+      <hr style="margin: 10px 0px 20px;">
+      <div id="formToHide">
+      <h6>Создание новой национальной оценки:</h6>
+      <div class="row">
+        <div class="col-md-8">
+          <form method="post">
+            {% csrf_token %} {{ form|crispy }}
+        </div>
+        <div class="col-md-3">
+          <div class="form-group regbutton">
+            <button class="btn btn-primary" type="submit" name="button" style="margin-top: 36px;">Создать новую</button>
+          </div>
+        </div>
+        </form>
+      </div>
+      </div>
+      <h6 style=" margin: 10px 0px 15px;">Имеющееся национальные оценки:</h6>
+      <table class="table table-sm table-bordered">
+        <thead class="mythead">
+          <tr>
+            <th width="5%" class="text-center" scope="col">#</th>
+            <th class="text-center" scope="col">На украинском</th>
+            <th class="text-center" scope="col">На русском</th>
+            <th class="text-center" scope="col">Укр. кратко</th>
+            <th class="text-center" scope="col">Рус. кратко</th>
+            <th width="10%" class="text-center" scope="col">Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for national_mark in national_marks%}
+          <tr>
+            <td align="center">{{ forloop.counter }}</td>
+            <td>{{ national_mark.national_mark_ukr }}</td>
+            <td>{{ national_mark.national_mark_rus }}</td>
+            <td>{{ national_mark.national_mark_ukr_short }}</td>
+            <td>{{ national_mark.national_mark_rus_short }}</td>
+
+            <!-- Modal delete -->
+            <div class="modal fade" id="modalDelete{{ national_mark.id }}" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Удалить национальную оценку?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>На ураинском: </strong>{{ national_mark.national_mark_ukr }}</p>
+                    <p><strong>На русском: </strong>{{ national_mark.national_mark_rus }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <a role="button" class="btn btn-danger editButtons" href="/marks_system/all_national_marks/delete{{ national_mark.id }}">Удалить</a>
+                    <button type="button" class="btn  btn-secondary editButtons cancelButton" data-dismiss="modal">Отмена</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!--<td><a class="" href="/university_structure/departments/delete{{ department.id }}">Удалить</a></td>-->
+            <td width="10%" align="center">
+              <a class="" href="/marks_system/all_national_marks/edit{{ national_mark.id }}"><i class="fas fa-edit icon"></i></a>
+              <a class="" href="#" data-toggle="modal" data-target="#modalDelete{{ national_mark.id }}"><i class="fas fa-trash-alt icon"></i></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  $(document).ready(function() {
+    $("#hideFormButton").click(function() {
+      if (document.getElementById("hideFormButton").innerText == "Только список"){
+        document.getElementById("hideFormButton").innerText = "Показать форму"
+      }
+      else{
+        document.getElementById("hideFormButton").innerText = "Только список"
+      }
+      $("#formToHide").toggle();
+    });
+  });
+</script>
+{% endblock script %}

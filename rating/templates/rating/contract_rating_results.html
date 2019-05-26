@@ -1,0 +1,118 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Рейтинг контрактников</title>{% endblock %}
+
+{% block navitems %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %} {% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <a href="{% url 'scolarship-rating' %}"><i class="fas fa-file-invoice-dollar icon"></i>Стипендиальный рейтинг</a>
+        <a class="active" href="{% url 'contract-rating' %}"><i class="fas fa-file-alt icon"></i>Рейтинг контрактников</a>
+      </div>
+    </div>
+    <div class="col-md-9 content">
+      <div class="row">
+        <div class="col-md-9">
+          <h4>Рейтинговый список контктников ({{ course }})</h4>
+        </div>
+        <div class="col-md-3">
+          <a href="/rating/contract_rating/" class="buttonBackEdit"><i class="fas fa-arrow-left"></i> Назад</a>
+        </div>
+      </div>
+
+      <hr style="margin: 10px 0px 20px;">
+      <div class="row">
+        <div class="col-md-7">
+          <p><strong>Учебный год:</strong> {{ edu_year.educational_year }}</p>
+          <p><strong>Факультет: </strong> {{ faculty }}</p>
+          <p><strong>Специальность: </strong> {{ sepecialty }}</p>
+          <p><strong>Группы: </strong>{{ groupsString }}</p>
+          <p><strong>Семестр: </strong> {{ semester }}</p>
+        </div>
+
+        <div class="col-md-5 align-self-center">
+          <div class="row justify-content-center">
+            <div class="col-md-7">
+              <!--<button class="btn btn-secondary" type="submit" name="button" >Печать рейтингового списка</button>-->
+              <a class="btn btn-secondary" href="/rating/contract_rating/results_{{ course.id }}_{{ edu_year.id }}_{{ faculty.id }}_{{ sepecialty.id }}_{{semester}}/print/" target="_blank" role="button">Печать рейтингового списка</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+
+      <hr class="mainHr1">
+
+      <table id="marks_table" class="table table-sm table-bordered">
+        <thead class="mythead">
+          <tr>
+            <th width="8%" class="text-center" scope="col">#</th>
+            <th class="text-center" scope="col">Фамилия</th>
+            <th class="text-center" scope="col">Имя</th>
+            <th class="text-center" scope="col">Отчество</th>
+            <th class="text-center" scope="col">Акад. балл</th>
+            <th class="text-center" scope="col">Рейт. балл</th>
+            <th class="text-center" scope="col">Группа</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in rating_data_list%}
+          <tr style="cursor:pointer;" class="hooverable" onclick="show_hide_row('hidden_row{{ forloop.counter }}');">
+            <!--<td align="center">{{ student_mark.program.semester }}</td>-->
+            <td align="center">{{ forloop.counter }}</td>
+            <td>{{ item.student.last_name }}</td>
+            <td>{{ item.student.first_name }}</td>
+            <td>{{ item.student.middle_name }}</td>
+            <td align="center">{{ item.academic_mark }}</td>
+            <td align="center">{{ item.rating_mark }}</td>
+            <td align="center">{{ item.student.group.name }}</td>
+
+          </tr>
+          <tr id="hidden_row{{ forloop.counter }}" class="hidden_table_row">
+            <td colspan=7> <p class="tableP"><strong>Баллы за семестровый контроль:</strong></p>
+              {% for piece in item.subjects_and_marks_drop_down_list %}
+              <p class="tableP"> {{piece.subject }} - {{ piece.mark.mark }} </p>
+              {% endfor %}
+              {% if item.extra_marks_drop_down_list %}
+              <hr style="margin-top: 8px; margin-bottom: 8px;">
+              <p class="tableP"><strong>Дополнительные баллы:</strong></p>
+              {% for piece2 in item.extra_marks_drop_down_list %}
+              <p class="tableP"> {{ piece2.activity }}</p>
+              {% endfor %}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script type="text/javascript">
+  function show_hide_row(row) {
+    $("#" + row).toggle();
+  }
+</script>
+{% endblock script %}

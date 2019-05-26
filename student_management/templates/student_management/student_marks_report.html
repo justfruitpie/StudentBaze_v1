@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="shortcut icon" href="{%  static 'home/favicon_print.png' %}">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{% static 'home/main.css' %}">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
+  <title>Отчет об успеваемости студента</title>
+
+</head>
+
+<body>
+  <div class="container toDown2">
+    <div class="row">
+      <div class="col-md-12">
+        <h4 style="text-align: center;">ОТЧЕТ ОБ УСПЕВАЕМОСТИ СТУДЕНТА</h4>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12">
+        <p><strong>ФИО: </strong> {{ student.last_name }} {{ student.first_name }} {{ student.middle_name }}</p>
+        <p><strong>Группа: </strong> {{student.group.name}}</p>
+        <p><strong>Факультет: </strong> {{edu_program.faculty_insitute_specialty.faculty_insitute.name}}</p>
+        <p><strong>Образ. программа: </strong> {{edu_program.name}}</p>
+      </div>
+    </div>
+    <br>
+    <br>
+    <div class="row">
+      <div class="col-md-12">
+        <h5 style="text-align: center;">Оценки за {{ semester }} семестр</h5>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-sm table-bordered table-striped">
+          <thead >
+            <tr>
+              <th class="text-center" scope="col">Предмет</th>
+              <th class="text-center" scope="col">Кол-во кредитов</th>
+              <th class="text-center" scope="col">Нац. оценка</th>
+              <th class="text-center" scope="col">Кол-во баллов</th>
+              <th class="text-center" scope="col">ECTS</th>
+              <th class="text-center" scope="col">Хвостовка</th>
+              <th class="text-center" scope="col">Тип контроля</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in reportData %}
+            <tr>
+              <th >{{ item.subject }}</th>
+              <td align="center">{{ item.credits }}</td>
+              <td align="center">{% if item.national_mark %}{{ item.national_mark }}{% else %}{% endif %}</td>
+              <td align="center">{% if item.mark %}{{ item.mark }}{% else %}{% endif %}</td>
+              <td align="center">{% if item.ects_mark %}{{ item.ects_mark }}{% else %}{% endif %}</td>
+              <td align="center">{% if item.po_hvostovke %} Да {% else %}{% endif %}</td>
+              <td align="center">{{ item.control_type }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <br>
+    <br>
+    <hr>
+    <br>
+    <div class="row justify-content-end">
+      <div class="col-md-3">
+        <h6>{{ current_time | date:"d/m/Y"}}</h6>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
+  {% block script %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,212 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Выставление оценок</title>{% endblock %}
+
+ {% block navitems %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %} {% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <div class="marks_side_bar">
+          <hr class="hr_marks_side_bar">
+          <p class="extra_marks_text"><strong>Семестровый контроль</strong></p>
+          <div class="upper">
+            <a class="active" href="{% url 'set-marks-to-group-select' %}"><i class="fas fa-star-half-alt icon"></i>Выставить оценки</a>
+            <a href="{% url 'general-marks' %}"><i class="fas fa-tasks icon"></i>Список всех оценок</a>
+            <a href="{% url 'ects-marks' %}"><i class="fas fa-font icon"></i>Оценки ECTS</a>
+            <a href="{% url 'national-marks' %}"><i class="fas fa-home icon"></i>Национальные оценки</a>
+            <a href="{% url 'educational-years' %}"><i class="far fa-calendar-alt icon"></i>Учебные года</a>
+          </div>
+          <hr class="hr_marks_side_bar">
+          <p class="extra_marks_text"><strong>Доп. баллы</strong></p>
+          <div class="upper">
+            <a href="{% url 'extra-marks-choose-student' %}"><i class="fas fa-plus-circle icon"></i>Присвоить доп. баллы</a>
+            <a href="{% url 'extra-marks-activities' %}"><i class="fas fa-trophy icon"></i>Деятельности и достижения</a>
+            <a href="{% url 'extra-marks-activity-categories' %}"><i class="fas fa-th-large icon"></i>Категории деятел. и достиж.</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9 content">
+      <h4>Выбор группы для выставления оценок</h4>
+      <hr style="margin: 10px 0px 20px;">
+
+      <h6 style=" margin: 10px 0px 15px;">Имеющееся академические группы:</h6>
+
+      <div class="row">
+        <div class="col-md-8">
+          <form id="search_form" searched_results="#">
+            <div class="form-group">
+              <input type="text" id="input_groups" class="form-control" onkeyup="groups_search()" placeholder="Поиск академических групп">
+            </div>
+          </form>
+        </div>
+        <a role="button" class="btn btn-link clearSearchCross" href="#!" onclick="clearSearchField()"><i class="fas fa-times"></i></a>
+      </div>
+
+      <table id="groups_table" class="table table-sm table-bordered">
+        <thead class="mythead">
+          <tr>
+            <th width="5%" class="text-center" scope="col">#</th>
+            <th class="text-center" scope="col">Название</th>
+            <th class="text-center" scope="col">Образовательная программа</th>
+            <th width="15%" class="text-center" scope="col">Учебный план</th>
+            <th class="text-center" scope="col">Выпускающая кафедра</th>
+            <th class="text-center" scope="col">Год старта обучения</th>
+            <th width="16%" class="text-center" scope="col">Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for group in groups%}
+          <tr>
+            <td align="center">{{ forloop.counter }}</td>
+            <td align="center">{{ group.name }}</td>
+            <td>{{ group.educational_program }}</td>
+            <td align="center">{{ group.syllabus.cypher }}</td>
+            <td>{{ group.department }}</td>
+            <td align="center">{{ group.start_year }}</td>
+
+            <!-- Modal delete -->
+            <div class="modal fade" id="modalDelete{{ group.id }}" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Удалить группу?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>Название: </strong>{{ group.name }}</p>
+                    <p><strong>Образовательная программа: </strong>{{ group.educational_program }}</p>
+                    <p><strong>Учебный план: </strong>{{ group.syllabus.cypher }}</p>
+                    <p><strong>Выпускающая кафедра: </strong>{{ group.department }}</p>
+                    <p><strong>Год старта обучения: </strong>{{ group.start_year }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <a role="button" class="btn btn-danger editButtons" href="/student_management/groups/delete{{ group.id }}">Удалить</a>
+                    <button type="button" class="btn  btn-secondary editButtons cancelButton" data-dismiss="modal">Отмена</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!--<td><a class="" href="/university_structure/departments/delete{{ department.id }}">Удалить</a></td>-->
+            <td align="center">
+              <a role="button" class="btn btn-primary selectForMarksButton" href="/marks_system/set_marks_to_group/group{{ group.id }}">Выставить оценки</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %} {% block script %}
+<script>
+  $(document).ready(function() {
+    $("#hideFormButton").click(function() {
+      if (document.getElementById("hideFormButton").innerText == "Спрятать форму") {
+        document.getElementById("hideFormButton").innerText = "Показать форму"
+      } else {
+        document.getElementById("hideFormButton").innerText = "Спрятать форму"
+      }
+      $("#formToHide").toggle();
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+    $('#id_syllabus').select2({
+      placeholder: '',
+      allowClear: true,
+    });
+  });
+</script>
+
+<script>
+  function groups_search() {
+    var input, filter, ul, tr, a, i, txtValue;
+    input = document.getElementById("input_groups");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("groups_table");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[1];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+
+          td = tr[i].getElementsByTagName("td")[2];
+          if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+
+              td = tr[i].getElementsByTagName("td")[3];
+              if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                  tr[i].style.display = "";
+                } else {
+
+                  td = tr[i].getElementsByTagName("td")[4];
+                  if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                      tr[i].style.display = "";
+                    } else {
+
+                      td = tr[i].getElementsByTagName("td")[5];
+                      if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                          tr[i].style.display = "";
+                        } else {
+                          tr[i].style.display = "none";
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+        }
+      }
+    }
+  }
+</script>
+<script>
+  function clearSearchField() {
+    var input = document.getElementById("input_groups");
+    input.value = ""
+    tr = document.getElementById("groups_table").getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      tr[i].style.display = "";
+    }
+  }
+</script>
+{% endblock script %}

@@ -1,0 +1,130 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Виды семестрового контроля</title>{% endblock %}
+
+{% block navitems %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %}
+
+{% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <a href="{% url 'syllabuses' %}"><i class="fas fa-columns icon"></i>Учебные планы</a>
+        <a href="{% url 'subjects' %}"><i class="fas fa-ruler icon"></i>Дисциплины</a>
+        <!--<hr class="sidebarLine">-->
+        <a class="active" href="{% url 'semester-control-types' %}"><i class="fas fa-clipboard-check icon"></i>Виды семестрового контроля</a>
+        <a href="{% url 'individual-tasks' %}"><i class="fas fa-business-time icon"></i>Индивидуальные задания</a>
+        <a href="{% url 'classes-types' %}"><i class="fas fa-book-reader icon"></i>Типы занятий</a>
+      </div>
+    </div>
+    <div class="col-md-9 content">
+      <div class="row">
+        <div class="col-md-9">
+          <h4>Виды семестрового контроля</h4>
+        </div>
+        <div class="col-md-3">
+          <button id="hideFormButton" type="button" class="btn btn-light btn-sm hideButton">Только список</button>
+        </div>
+      </div>
+
+      <hr style="margin: 10px 0px 20px;">
+
+      <div id="formToHide">
+      <h6>Создание нового вида семестрового контроля:</h6>
+      <div class="row">
+        <div class="col-md-8">
+          <form method="post">
+            {% csrf_token %} {{ form|crispy }}
+        </div>
+        <div class="col-md-3">
+          <div class="form-group regbutton">
+            <button class="btn btn-primary" type="submit" name="button" style="margin-top: 36px;">Создать новый</button>
+          </div>
+          </form>
+        </div>
+      </div>
+      </div>
+      <h6 style=" margin: 10px 0px 15px;">Имеющееся виды семестрового контроля:</h6>
+      <table class="table table-sm table-bordered">
+        <thead class="mythead">
+          <tr>
+            <th width="5%" class="text-center" scope="col">#</th>
+            <th scope="col">Название</th>
+            <th width="7%" class="text-center" scope="col">Кратко</th>
+            <th width="10%" class="text-center" scope="col">Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for semester_control_type in semester_control_types%}
+          <tr>
+            <td align="center">{{ forloop.counter }}</td>
+            <td>{{ semester_control_type.full_name }}</td>
+            <td align="center">{{ semester_control_type.short_name }}</td>
+
+            <!-- Modal delete -->
+            <div class="modal fade" id="modalDelete{{ semester_control_type.id }}" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Удалить вид семестрового контроля?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>Полное название: </strong>{{ semester_control_type.full_name }}</p>
+                    <p><strong>Краткое название: </strong>{{ semester_control_type.short_name }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <a role="button" class="btn btn-danger editButtons" href="/education_planning/semester_control_types/delete{{ semester_control_type.id }}">Удалить</a>
+                    <button type="button" class="btn btn-secondary editButtons cancelButton" data-dismiss="modal">Отмена</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!--<td><a class="" href="/university_structure/faculties_institutes/delete{{ facinst.id }}">Удалить</a></td>-->
+            <td align="center">
+              <a class="" href="/education_planning/semester_control_types/edit{{ semester_control_type.id }}"><i class="fas fa-edit icon"></i></a>
+              <a class="" href="#" data-toggle="modal" data-target="#modalDelete{{ semester_control_type.id }}"><i class="fas fa-trash-alt icon"></i></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  $(document).ready(function() {
+    $("#hideFormButton").click(function() {
+      if (document.getElementById("hideFormButton").innerText == "Только список"){
+        document.getElementById("hideFormButton").innerText = "Показать форму"
+      }
+      else{
+        document.getElementById("hideFormButton").innerText = "Только список"
+      }
+      $("#formToHide").toggle();
+    });
+  });
+</script>
+{% endblock script %}

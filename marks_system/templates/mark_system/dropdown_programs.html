@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for program in programs %}
+<option value="{{ program.id }}">{{ program.subject }} - {{ program.getSemControl}} - ({{ program.syllabus.cypher }})</option>
+{% endfor %}

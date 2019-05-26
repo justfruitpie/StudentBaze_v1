@@ -1,0 +1,119 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Рейтинг контрактников</title>{% endblock %}
+
+{% block navitems %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'scolarship-rating' %}">Рейтинг</a>
+</li>
+{% endblock %}
+
+{% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <a href="{% url 'scolarship-rating' %}"><i class="fas fa-file-invoice-dollar icon"></i>Стипендиальный рейтинг</a>
+        <a class="active" href="{% url 'contract-rating' %}"><i class="fas fa-file-alt icon"></i>Рейтинг контрактников</a>
+      </div>
+    </div>
+    <div class="col-md-9 content">
+      <h4>Расчет рейтинга контрактников</h4>
+      {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger">
+          {{ message }}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endfor %}
+      {% endif %}
+      <hr style="margin: 10px 0px 20px;">
+      <h6>Задание необходимых параметров:</h6>
+      <div class="row">
+        <div class="col-md-8" id="forSemesterAjax" data-semesters-url="{% url 'ajax-load-semesters' %}">
+          <form method="post" id="forSpecialtyAjax" data-specialties-url="{% url 'ajax-load-specialties' %}">
+            {% csrf_token %} {{ form|crispy }}
+        </div>
+        <div class="col-md-3">
+          <div class="form-group regbutton">
+            <button class="btn btn-primary" type="submit" name="button" style="margin-top: 36px;">Сформировать рейтинг</button>
+          </div>
+        </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  $(document).ready(function() {
+      $('#id_faculty_institute').select2({
+  placeholder: '',
+  allowClear: true,
+});
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+      $('#id_specialty').select2({
+  placeholder: '',
+  allowClear: true,
+});
+  });
+
+  $("#id_course").change(function () {
+
+      var url = $("#forSemesterAjax").attr("data-semesters-url");
+      var course_id = $(this).val();
+
+      $.ajax({
+        url: url,
+        data: {
+          'course_id': course_id
+        },
+        success: function (data) {
+          //document.getElementById("changable").innerHTML = data;
+          $("#id_semester").html(data);
+        }
+      });
+
+    });
+
+    $("#id_faculty_institute").change(function () {
+
+        var url = $("#forSpecialtyAjax").attr("data-specialties-url");
+        var facinst_id = $(this).val();
+
+        $.ajax({
+          url: url,
+          data: {
+            'facinst_id': facinst_id
+          },
+          success: function (data) {
+            //document.getElementById("changable").innerHTML = data;
+            $("#id_specialty").html(data);
+          }
+        });
+
+      });
+
+</script>
+{% endblock %}

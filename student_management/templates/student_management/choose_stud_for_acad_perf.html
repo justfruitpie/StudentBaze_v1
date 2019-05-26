@@ -1,0 +1,178 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Успеваемость студентов</title>{% endblock %}
+
+{% block navitems %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %}
+
+{% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <a href="{% url 'groups' %}"><i class="fas fa-users icon"></i>Академические группы</a>
+        <a href="{% url 'students' %}"><i class="fas fa-user-graduate icon"></i>Студенты</a>
+        <a class="active" href="{% url 'academic-performance' %}"><i class="fas fa-check-circle icon"></i>Успеваемость студентов</a>
+        <a href="{% url 'semester-group-report' %}"><i class="fas fa-calendar-check icon"></i>Семестровая ведомость</a>
+      </div>
+    </div>
+    <div class="col-md-9 content">
+      <h4>Успеваемость студентов</h4>
+      <hr style="margin: 10px 0px 20px;">
+      <h6 style=" margin: 10px 0px 15px;">Имеющееся студенты:</h6>
+      <div class="row">
+        <div class="col-md-8">
+          <form id="search_form" searched_results="#">
+            <div class="form-group">
+              <input type="text" id="input_students" class="form-control" onkeyup="students_search()" placeholder="Поиск студентов">
+            </div>
+          </form>
+        </div>
+        <a role="button" class="btn btn-link clearSearchCross" href="#!" onclick="clearSearchField()"><i class="fas fa-times"></i></a>
+      </div>
+
+      <table id="students_table" class="table table-sm table-bordered">
+        <thead class="mythead">
+          <tr>
+            <th width="5%" class="text-center" scope="col">#</th>
+            <th class="text-center" scope="col">ФИО</th>
+            <th class="text-center" scope="col">Пол</th>
+            <th class="text-center" scope="col">Дата рождения</th>
+            <th class="text-center" scope="col">Академ. группа</th>
+            <th class="text-center" scope="col">Источник финанс.</th>
+            <th width="14%" class="text-center" scope="col">Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students%}
+          <tr>
+            <td align="center">{{ forloop.counter }}</td>
+            <td>{{ student.last_name }} {{ student.first_name }} {{ student.middle_name }}</td>
+            <td align="center">{{ student.sex.short_name }}</td>
+            <td align="center">{{ student.date_of_birdth|date:"d/m/Y" }}</td>
+            <td align="center">{{ student.group.name }}</td>
+            <td align="center">{{ student.finance_source }}</td>
+
+
+            <!--<td><a class="" href="/university_structure/departments/delete{{ department.id }}">Удалить</a></td>-->
+            <td align="center">
+              <a role="button" class="btn btn-primary studentMarksButton" href="/student_management/academic_performance/student_{{ student.id }}">Успеваемость</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  $(document).ready(function() {
+    $("#hideFormButton").click(function() {
+      if (document.getElementById("hideFormButton").innerText == "Спрятать форму"){
+        document.getElementById("hideFormButton").innerText = "Показать форму"
+      }
+      else{
+        document.getElementById("hideFormButton").innerText = "Спрятать форму"
+      }
+      $("#formToHide").toggle();
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+      $('#id_group').select2({
+  placeholder: '',
+  allowClear: true,
+});
+  });
+</script>
+
+<script>
+    $(function () {
+      $("#id_date_of_birdth").datepicker({
+        format:'dd/mm/yyyy',
+      });
+    });
+  </script>
+
+  <script>
+    function students_search() {
+      var input, filter, ul, tr, a, i, txtValue;
+      input = document.getElementById("input_students");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("students_table");
+      tr = table.getElementsByTagName("tr");
+
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+
+            td = tr[i].getElementsByTagName("td")[3];
+            if (td) {
+              txtValue = td.textContent || td.innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+
+                td = tr[i].getElementsByTagName("td")[4];
+                if (td) {
+                  txtValue = td.textContent || td.innerText;
+                  if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                  } else {
+
+                    td = tr[i].getElementsByTagName("td")[5];
+                    if (td) {
+                      txtValue = td.textContent || td.innerText;
+                      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                      } else {
+                        tr[i].style.display = "none";
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+          }
+        }
+      }
+    }
+  </script>
+  <script>
+    function clearSearchField() {
+      var input = document.getElementById("input_students");
+      input.value = ""
+      tr = document.getElementById("students_table").getElementsByTagName("tr");
+      for (i = 0; i < tr.length; i++) {
+        tr[i].style.display = "";
+      }
+    }
+  </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js" integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
+{% endblock script%}

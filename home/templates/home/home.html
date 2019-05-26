@@ -1,0 +1,30 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Домашняя страница</title>{% endblock %}
+
+{% block navitems %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %}
+
+{% block content %}
+
+  <div class="homeText">
+    <h4>Домашняя страница</h4>
+    <!--<p>Страница, одинаковая для всех пользователей.</p>-->
+  </div>
+
+{% endblock content %}

@@ -1,0 +1,385 @@
+.toDown{
+  margin-top: 40px;
+}
+
+table td.crossedX
+{
+   background-image: linear-gradient(to bottom right,  transparent calc(50% - 1px), #dee2e6, transparent calc(50% + 1px)),
+                    linear-gradient(to bottom left,  transparent calc(50% - 1px), #dee2e6, transparent calc(50% + 1px));
+}
+
+table th.crossed
+{
+   background-image: linear-gradient(to bottom left,  transparent calc(50% - 1px), #dee2e6, transparent calc(50% + 1px)) !important;
+}
+
+.toDown2{
+  margin-top: 20px;
+}
+
+.homeText{
+  position: fixed;
+  text-align: center;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.register{
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+.center{
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+.sidebar{
+  margin: 0;
+  padding: 0;
+  width: 300px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+  font-size: .900rem;
+}
+
+.sideBarContent{
+  margin-top: 5px;
+}
+
+.sidebar a {
+  display: block;
+  color: #333;
+  padding: 8px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.sidebar a.active {
+  color: #007bff;
+}
+
+.sidebar a:hover {
+  background-color: #dad8d8;
+}
+
+.icon{
+  margin-right: 10px;
+}
+
+.iconlogo{
+  margin-right: 6px;
+}
+
+.sidebarLine{
+  height: 1px;
+  color: #a4aab1;
+  background-color: #a4aab1;
+  border: none;
+  margin: 10px 0 10px 0;
+}
+
+@media screen and (min-width: 641px) and (max-width: 800px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+
+  .sidebarLine{
+    display:none
+  }
+
+  div.content {
+    margin-top: 22px;
+    margin-left: 0%;
+    padding: 1px 16px;
+    height: 1000px;
+  }
+
+  .editButtons {
+      width: 110px !important;
+  }
+
+  .clearSearchCross{
+    position: relative;
+    right: 73px;
+    color: #495057;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .sidebarLine{
+    display:none
+  }
+
+  div.content {
+    margin-top: 22px;
+    margin-left: 0px;
+    padding: 1px 16px;
+    height: 1000px;
+  }
+
+  .editButtons {
+      width: auto;
+  }
+
+  .clearSearchCross{
+    display: none;
+  }
+}
+
+@media screen and (min-width: 801px) and (max-width: 1024px) {
+  .log{
+      position: absolute;
+      right: 150px;
+  }
+
+  .reg{
+      position: absolute;
+      right: 30px;
+  }
+
+  div.content {
+    margin-top: 22px;
+    margin-left: 17%;
+    padding: 1px 16px;
+    height: 1000px;
+  }
+
+  .editButtons {
+      width: 110px !important;
+  }
+
+  .clearSearchCross{
+    position: relative;
+    right: 73px;
+    color: #495057;
+  }
+}
+
+@media screen and (min-width: 1025px){
+  div.content {
+    margin-top: 22px;
+    margin-left: 17%;
+    padding: 1px 16px;
+    height: 1000px;
+  }
+
+  .clearSearchCross{
+    position: relative;
+    right: 60px;
+    color: #495057;
+  }
+
+  .editButtons {
+      width: 110px !important;
+  }
+}
+
+.select2-container .select2-selection--single {
+    height: 40px !important;
+}
+
+.select2-selection__rendered{
+  margin-top: 5px;
+}
+
+.cancelButton{
+  background-color: #adb3b7;
+  border-color: #a6a8aa;
+}
+
+.hideButton{
+  background-color: #e2e6ea;
+}
+
+.syllabusButton {
+    width: 105px !important;
+    height: 27px !important;
+    text-align: center;
+    font-size: 16px;
+    padding: 0px 0px 0px;
+}
+
+.hoursButton{
+  width: 145px !important;
+  height: 27px !important;
+  text-align: center;
+  font-size: 16px;
+  padding: 0px 0px 0px;
+  margin-top: 4px;
+  margin-bottom: 3px;
+}
+
+.setMarkButton{
+  width: 150px !important;
+  height: 27px !important;
+  text-align: center;
+  font-size: 16px;
+  padding: 0px 0px 0px;
+  margin-left: -7px;
+  margin-right: -7px;
+}
+
+.studentMarksButton{
+  width: 130px !important;
+  height: 27px !important;
+  text-align: center;
+  font-size: 16px;
+  padding: 0px 0px 0px;
+  margin-left: -7px;
+  margin-right: -7px;
+}
+
+.studentsButton {
+  width: 96px !important;
+  height: 27px !important;
+  text-align: center;
+  font-size: 16px;
+  padding: 0px 0px 0px;
+  margin-left: -7px;
+  margin-right: -7px;
+}
+
+.studentReport{
+
+  width: 202px !important;
+}
+
+.selectForMarksButton{
+  width: 155px !important;
+  height: 27px !important;
+  text-align: center;
+  font-size: 16px;
+  padding: 0px 0px 0px;
+  margin-left: -7px;
+  margin-right: -7px;
+}
+
+.mythead{
+  color: white;
+  background-color: #343a40 !important;
+}
+
+.table thead th{
+  vertical-align: middle;
+}
+
+.table td{
+  vertical-align: middle;
+}
+
+.clearSearchCross:hover{
+  color: #343a40;
+}
+
+.mainHr{
+  color: #ced4da;
+  background-color: #ced4da;
+}
+
+.mainHr1{
+
+  color: #ced4da;
+  background-color: #ced4da;
+  margin-top: 13px;
+}
+
+.pageTitle{
+  margin-left: 10px;
+}
+
+.extra_marks_text{
+  margin-bottom: 10px;
+  position: relative;
+  left: 30px;
+  bottom: 40px;
+  color: #333333;
+  font-size: 14.4px;
+  font-weight: 500;
+  line-height: 21.6px;
+}
+
+.upper{
+  position: relative;
+  bottom: 42px;
+}
+
+.marks_side_bar{
+  margin-top: 40px;
+}
+
+.hr_marks_side_bar{
+  color: #b4b4b4;
+  background-color: #b4b4b4;
+}
+
+.selectForExtraMarks{
+  width: 190px !important;
+  height: 27px !important;
+  text-align: center;
+  font-size: 16px;
+  padding: 0px 0px 0px;
+  margin-left: -7px;
+  margin-right: -7px;
+}
+
+table{
+  box-shadow:0px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hidden_table_row
+{
+ display:none;
+}
+
+tr.hooverable:hover
+{
+ background-color:#dfe6ed;
+}
+
+tr.hidden_table_row{
+  background-color: #f9f9fb;
+}
+
+.tableP{
+  margin: 0;
+  padding: 0;
+}
+
+.buttonBack{
+  position: absolute;
+  margin-left: 22px;
+  margin-top: 2px;
+}
+
+.buttonBackEdit{
+  position: absolute;
+  margin-left: 133px;
+  margin-top: 2px;
+}
+
+.no_scolarship{
+  background-color: #f6ecec;
+}
+
+.no_scolarship_dark{
+  background-color: #eee1e1 !important;
+}
+
+.buttonSemesterReport{
+  margin-bottom: 20px;
+}

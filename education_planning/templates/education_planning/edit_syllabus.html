@@ -1,0 +1,124 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Изменить учебный план</title>{% endblock %}
+
+{% block navitems %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %}
+
+{% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <a class="active" href="{% url 'faculties-institutes' %}"><i class="fas fa-columns icon"></i></i>Учебные планы</a>
+        <a href="{% url 'subjects' %}"><i class="fas fa-ruler icon"></i>Дисциплины</a>
+        <!--<hr class="sidebarLine">-->
+        <a href="{% url 'semester-control-types' %}"><i class="fas fa-clipboard-check icon"></i>Виды семестрового контроля</a>
+        <a href="{% url 'individual-tasks' %}"><i class="fas fa-business-time icon"></i>Индивидуальные задания</a>
+        <a href="{% url 'classes-types' %}"><i class="fas fa-book-reader icon"></i>Типы занятий</a>
+      </div>
+    </div>
+    <div class="col-md-9 content">
+      <h4>Учебный план №{{ instance.cypher }}</h4>
+      <hr style="margin: 10px 0px 20px;">
+      <h6>Редактирование учеюного плана</h6>
+      <div class="row">
+        <div class="col-md-8">
+          <form method="post">
+            {% csrf_token %} {{ form|crispy }}
+
+            <!-- Modal confirm_edit -->
+            <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Подтвердить изменения?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn btn-primary" type="submit" name="button">Подтвердить</button>
+                    <button type="button" class="btn btn-secondary cancelButton" data-dismiss="modal">Отмена</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal delete -->
+            <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Удалить учебный план?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>Шифр: </strong>{{instance.cypher}}</p>
+                    <p><strong>Образовательная программа: </strong>{{ instance.educational_program.name }} - ({{ instance.educational_program.cypher }})</p>
+                    <p><strong>Год: </strong>{{ instance.year_of_approval }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <a role="button" class="btn btn-danger editButtons" href="/education_planning/syllabuses/delete{{ instance.id }}">Удалить</a>
+                    <button type="button" class="btn btn-secondary editButtons cancelButton" data-dismiss="modal">Отмена</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-md-8 col-lg-8 col-xs-12">
+        <div class="row justify-content-end">
+          <div class="butH" style = "margin-right: 1.5%; margin-top: 5px;">
+            <a role="button" class="btn btn-primary editButtons" href="#" data-toggle="modal" data-target="#modalEdit" style="margin-top: 0px;">Изменить</a>
+            <a role="button" class="btn btn-danger editButtons" href="#" data-toggle="modal" data-target="#modalDelete" style="margin-top: 0px; margin-left: 10px">Удалить</a>
+            <a role="button" class="btn btn-secondary cancelButton editButtons" href="/education_planning/syllabuses/" style="margin-top: 0px; margin-left: 10px">Отменить</a>
+            <!--<button class="btn btn-primary" type="submit" name="button" style="margin-top: 36px;">Сохранить изменения</button>-->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  $(document).ready(function() {
+    $('#id_educational_program').select2({
+      placeholder: '',
+      allowClear: true,
+    });
+  });
+</script>
+<script>
+  $(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
+</script>
+{% endblock %}

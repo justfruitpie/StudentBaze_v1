@@ -1,0 +1,92 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Семестровая ведомсть</title>{% endblock %}
+
+{% block navitems %} {% load crispy_forms_tags %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %} {% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <a href="{% url 'groups' %}"><i class="fas fa-users icon"></i>Академические группы</a>
+        <a href="{% url 'students' %}"><i class="fas fa-user-graduate icon"></i>Студенты</a>
+        <a href="{% url 'academic-performance' %}"><i class="fas fa-check-circle icon"></i>Успеваемость студентов</a>
+        <a class="active" href="{% url 'semester-group-report' %}"><i class="fas fa-calendar-check icon"></i>Семестровая ведомость</a>
+      </div>
+    </div>
+    <div class="col-md-9 content">
+      <div class="row">
+        <div class="col-md-9">
+          <h4>Семестровая ведомость для группы {{ group.name }} за {{ semester }} семестр</h4>
+        </div>
+        <div class="col-md-3">
+          <a href="/student_management/semester_group_report/" class="buttonBackEdit"><i class="fas fa-arrow-left"></i> Назад</a>
+        </div>
+      </div>
+
+
+      <hr style="margin: 10px 0px 20px;">
+      <div class="row">
+        <div class="col-md-5">
+          <p><strong>Учебный год: </strong>{{ edu_year }}</p>
+          <p><strong>Количество задолженностей: </strong> {{ zadolzhenost_count }}</p>
+          <p><strong>Количество студентов с задолженностями: </strong> {{ students_with_zadolzhenosti }}</p>
+        </div>
+        <div class="col-md-6 align-self-center">
+          <div class="row justify-content-end">
+              <a class="btn btn-secondary buttonSemesterReport" href="/student_management/semester_group_report/group_{{ group.id }}_semester_{{ semester }}/print" target="_blank" role="button">Печать семестровой ведомости</a>
+          </div>
+        </div>
+      </div>
+      <hr class="mainHr1">
+      <br>
+
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table table-sm table-bordered">
+            <thead >
+              <tr>
+                <th class="text-center crossed" width="20%" scope="col"></th>
+                {% for subject in list_of_subjects %}
+                <th class="text-center" scope="col">{{ subject }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in listOfDataItems %}
+              <tr>
+                <th >{{ item.student.getWithInitials }}</th>
+                {% for mark in item.marks %}
+                {% if mark == 0 %}
+                <td align="center" class="crossedX"></td>
+                {% else %}
+                <td align="center"> {{mark}} </td>
+                {% endif %}
+
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock content %}

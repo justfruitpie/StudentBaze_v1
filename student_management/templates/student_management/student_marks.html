@@ -1,0 +1,237 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Успеваемость студента</title>{% endblock %}
+
+{% block navitems %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %} {% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <a href="{% url 'groups' %}"><i class="fas fa-users icon"></i>Академические группы</a>
+        <a href="{% url 'students' %}"><i class="fas fa-user-graduate icon"></i>Студенты</a>
+        <a class="active" href="{% url 'academic-performance' %}"><i class="fas fa-check-circle icon"></i>Успеваемость студентов</a>
+        <a href="{% url 'semester-group-report' %}"><i class="fas fa-calendar-check icon"></i>Семестровая ведомость</a>
+      </div>
+    </div>
+    <div class="col-md-9 content">
+      <div class="row">
+        <div class="col-md-9">
+          <h4>{{ student.last_name }} {{ student.first_name }} {{ student.middle_name }}</h4>
+        </div>
+        <div class="col-md-3">
+          <a href="/student_management/academic_performance/" class="buttonBackEdit"><i class="fas fa-arrow-left"></i> Назад</a>
+        </div>
+      </div>
+
+
+      <hr style="margin: 10px 0px 20px;">
+      <div class="row">
+        <div class="col-md-5">
+          <p><strong>Академ. группа:</strong> {{ student.group }}</p>
+          <p><strong>Источник финансирования:</strong> {{ student.finance_source }}</p>
+          <p><strong>Средний бал:</strong> {{ avarage_mark }}</p>
+        </div>
+
+        {% if number_of_marks > 0 %}
+        <div class="col-md-6 align-self-center" style="padding-left: 80px;">
+          <form method="post">
+          <div class="row justify-content-end">
+            <div class="col-md-2">
+              <p style="padding-top: 6px;">Семестр:</p>
+            </div>
+            <div class="col-md-2">
+              {% csrf_token %} {{ form|crispy }}
+            </div>
+            <div class="col-md-7">
+              <button class="btn btn-secondary" type="submit" name="button" >Отчет об успеваемости</button>
+            </div>
+          </div>
+          </form>
+        </div>
+        {% endif %}
+
+      </div>
+
+
+
+      <hr class="mainHr1">
+      <h6 style=" margin: 10px 0px 15px;">Оценки, которые получал студент:</h6>
+
+      {% if student_marks %}
+      <div class="row">
+        <div class="col-md-8">
+          <form id="search_form" searched_results="#">
+            <div class="form-group">
+              <input type="text" id="input_marks" class="form-control" onkeyup="marks_search()" placeholder="Поиск оценок">
+            </div>
+          </form>
+        </div>
+        <a role="button" class="btn btn-link clearSearchCross" href="#!" onclick="clearSearchField()"><i class="fas fa-times"></i></a>
+      </div>
+
+      <table id="marks_table" class="table table-sm table-bordered">
+        <thead class="mythead">
+          <tr>
+            <th width="8%" class="text-center" scope="col">Семестр</th>
+            <th class="text-center" scope="col">Предмет</th>
+            <th width="15%" class="text-center" scope="col">Учебный год</th>
+            <th class="text-center" scope="col">Балл</th>
+            <th class="text-center" scope="col">Нац. оценка</th>
+            <th width="7%" class="text-center" scope="col">ECTS</th>
+            <th class="text-center" scope="col">Хвостовка</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student_mark in student_marks%}
+          <tr>
+            <td align="center">{{ student_mark.program.semester }}</td>
+            <td>{{ student_mark.program.subject }}</td>
+            <td align="center">{{ student_mark.educational_year }}</td>
+            <td align="center"><strong>{{ student_mark.mark.mark }}</strong></td>
+            <td align="center">{{ student_mark.mark.national_mark }}</td>
+            <td align="center">{{ student_mark.mark.ects_mark }}</td>
+            <td align="center">{% if student_mark.po_hvostovke %} Да {% else %} {% endif %}</td>
+
+            <!-- Modal delete -->
+            <div class="modal fade" id="modalDelete{{ group.id }}" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Удалить группу?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>Название: </strong>{{ group.name }}</p>
+                    <p><strong>Образовательная программа: </strong>{{ group.educational_program }}</p>
+                    <p><strong>Учебный план: </strong>{{ group.syllabus.cypher }}</p>
+                    <p><strong>Выпускающая кафедра: </strong>{{ group.department }}</p>
+                    <p><strong>Год старта обучения: </strong>{{ group.start_year }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <a role="button" class="btn btn-danger editButtons" href="/student_management/groups/delete{{ group.id }}">Удалить</a>
+                    <button type="button" class="btn  btn-secondary editButtons cancelButton" data-dismiss="modal">Отмена</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>У данного студента отсутствуют оценки</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock content %} {% block script %}
+<script>
+  $(document).ready(function() {
+    $("#hideFormButton").click(function() {
+      if (document.getElementById("hideFormButton").innerText == "Спрятать форму") {
+        document.getElementById("hideFormButton").innerText = "Показать форму"
+      } else {
+        document.getElementById("hideFormButton").innerText = "Спрятать форму"
+      }
+      $("#formToHide").toggle();
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+    $('#id_syllabus').select2({
+      placeholder: '',
+      allowClear: true,
+    });
+  });
+</script>
+
+<script>
+  function marks_search() {
+    var input, filter, ul, tr, a, i, txtValue;
+    input = document.getElementById("input_marks");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("marks_table");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[1];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+
+          td = tr[i].getElementsByTagName("td")[2];
+          if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+
+              td = tr[i].getElementsByTagName("td")[3];
+              if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                  tr[i].style.display = "";
+                } else {
+
+                  td = tr[i].getElementsByTagName("td")[4];
+                  if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                      tr[i].style.display = "";
+                    } else {
+
+                      td = tr[i].getElementsByTagName("td")[5];
+                      if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                          tr[i].style.display = "";
+                        } else {
+                          tr[i].style.display = "none";
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+        }
+      }
+    }
+  }
+</script>
+<script>
+  function clearSearchField() {
+    var input = document.getElementById("input_marks");
+    input.value = ""
+    tr = document.getElementById("marks_table").getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      tr[i].style.display = "";
+    }
+  }
+</script>
+{% endblock script %}

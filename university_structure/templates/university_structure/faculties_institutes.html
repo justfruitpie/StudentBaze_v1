@@ -1,0 +1,208 @@
+{% extends "home/base.html" %}
+
+{% block title %}<title>StudentBaze - Факультеты институты</title>{% endblock %}
+
+{% block navitems %}
+<li class="nav-item">
+  <a class="nav-link active" href="{% url 'facinst-start-redirect' %}" id="nav-link-1">Структура университета</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'eduplanning-start-redirect' %}" id="nav-link-2">Обеспечение учебного процесса</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'groups' %}">Управление студентами</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'marks-system-start-redirect' %}">Система оценок</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'rating-start-redirect' %}">Рейтинг</a>
+</li>
+{% endblock %}
+
+{% block content %} {% load crispy_forms_tags %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar">
+      <div class="sideBarContent">
+        <a class="active" href="{% url 'faculties-institutes' %}"><i class="fas fa-network-wired icon"></i></i>Факультеты и институты</a>
+        <a href="{% url 'departments' %}"><i class="fas fa-university icon"></i>Кафедры</a>
+        <!--<hr class="sidebarLine">-->
+        <a href="{% url 'specialties' %}"><i class="fas fa-user-tie icon"></i>Специальности</a>
+        <a href="{% url 'edu-programs' %}"><i class="fas fa-chalkboard-teacher icon"></i>Образовательные программы</a>
+        <a href="{% url 'edu-levels' %}"><i class="fas fa-graduation-cap icon"></i>Образовательные уровни</a>
+        <a href="{% url 'courses' %}"><i class="fas fa-layer-group icon"></i>Курсы</a>
+      </div>
+    </div>
+    <div class="col-md-9 content">
+      <div class="row">
+        <div class="col-md-9">
+          <h4>Факультеты и институты</h4>
+        </div>
+        <div class="col-md-3">
+          <button id="hideFormButton" type="button" class="btn btn-light btn-sm hideButton">Только список</button>
+        </div>
+      </div>
+
+      <hr style="margin: 10px 0px 20px;">
+
+      <div id="formToHide">
+        {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endfor %}
+        {% endif %}
+      <h6>Создание нового факультета или института:</h6>
+      <div class="row">
+        <div class="col-md-8">
+          <form method="post">
+            {% csrf_token %} {{ form|crispy }}
+        </div>
+        <div class="col-md-3">
+          <div class="form-group regbutton">
+            <button class="btn btn-primary" type="submit" name="button" style="margin-top: 36px;">Создать новый</button>
+          </div>
+          </form>
+        </div>
+      </div>
+      <hr class="mainHr">
+      </div>
+
+      <h6 style=" margin: 10px 0px 15px;">Имеющееся факультеты и иституты:</h6>
+      <div class="row">
+        <div class="col-md-8">
+          <form id="search_form" searched_results="#">
+            <div class="form-group">
+              <input type="text" id="input_facinsts" class="form-control" onkeyup="facinsts_search()" placeholder="Поиск факульетов и институтов">
+            </div>
+          </form>
+        </div>
+        <a role="button" class="btn btn-link clearSearchCross" href="#!" onclick="clearSearchField()"><i class="fas fa-times"></i></a>
+      </div>
+      <table class="table table-sm table-bordered" id="facinsts_table">
+        <thead class="mythead">
+          <tr>
+            <th width="8%" class="text-center" scope="col">Шифр</th>
+            <th scope="col">Название</th>
+            <th width="10%" class="text-center" scope="col">Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for facinst in facinsts%}
+          <tr style="cursor:pointer;" class="hooverable">
+            <td align="center" onclick="show_hide_row('hidden_row{{ forloop.counter }}');"><strong>{{ facinst.cypher }}</strong></td>
+            <td onclick="show_hide_row('hidden_row{{ forloop.counter }}');">{{ facinst.name }}</td>
+
+
+            <!-- Modal delete-->
+            <div class="modal fade" id="modalDelete{{ facinst.id }}" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Удалить факультет (институт)?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>Название: </strong>{{facinst.name}}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <a role="button" class="btn btn-danger editButtons" href="/university_structure/faculties_institutes/delete{{ facinst.id }}">Удалить</a>
+                    <button type="button" class="btn btn-secondary editButtons cancelButton" data-dismiss="modal">Отмена</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!--<td><a class="" href="/university_structure/faculties_institutes/delete{{ facinst.id }}">Удалить</a></td>-->
+            <td align="center">
+              <a class="" href="/university_structure/faculties_institutes/edit{{ facinst.id }}"><i class="fas fa-edit icon"></i></a>
+              <a class="" href="#" data-toggle="modal" data-target="#modalDelete{{ facinst.id }}"><i class="fas fa-trash-alt icon"></i></a>
+            </td>
+          </tr>
+          <tr id="hidden_row{{ forloop.counter }}" class="hidden_table_row">
+            <td colspan=3>{% for item in facinst.getSpecialties %}<p class="tableP">{{item.specialty}}</p>{% endfor %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+  $(document).ready(function() {
+    $("#hideFormButton").click(function() {
+      if (document.getElementById("hideFormButton").innerText == "Только список"){
+        document.getElementById("hideFormButton").innerText = "Показать форму"
+      }
+      else{
+        document.getElementById("hideFormButton").innerText = "Только список"
+      }
+      $("#formToHide").toggle();
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+      $('#id_specialty').select2();
+  });
+</script>
+
+<script>
+  function facinsts_search() {
+    var input, filter, ul, tr, a, i, txtValue;
+    input = document.getElementById("input_facinsts");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("facinsts_table");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[0];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+
+          td = tr[i].getElementsByTagName("td")[1];
+          if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+
+        }
+      }
+    }
+  }
+</script>
+<script>
+  function clearSearchField() {
+    var input = document.getElementById("input_facinsts");
+    input.value = ""
+    tr = document.getElementById("facinsts_table").getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      tr[i].style.display = "";
+    }
+  }
+</script>
+
+<script type="text/javascript">
+  function show_hide_row(row) {
+    $("#" + row).toggle();
+  }
+</script>
+{% endblock %}
